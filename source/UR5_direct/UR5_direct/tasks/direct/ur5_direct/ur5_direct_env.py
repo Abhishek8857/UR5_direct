@@ -4,31 +4,31 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 from __future__ import annotations
-
-import math
-import torch
 from collections.abc import Sequence
 
+import numpy as np
+import torch
+import carb
 import isaaclab.sim as sim_utils
+
+from isaacsim.core.utils.torch as torch_utils
 from isaaclab.assets import Articulation
 from isaaclab.envs import DirectRLEnv
 from isaaclab.sim.spawners.from_files import GroundPlaneCfg, spawn_ground_plane
-from isaaclab.utils.math import sample_uniform
+from isaacsim.utils.assets import ISAACLAB_NUCLEUS_DIR
+from isaaclab.utils.math import sample_uniform, axis_angle_from_quat
 
-from .ur5_direct_env_cfg import Ur5DirectEnvCfg
+from .ur5_direct_env_cfg import Ur5DirectEnvCfg, OBS_DIM_CFG, STATE_DIM_CFG
+ASSET_DIR = f"{ISAACLAB_NUCLEUS_DIR}/Factory"
 
 
 class Ur5DirectEnv(DirectRLEnv):
     cfg: Ur5DirectEnvCfg
 
     def __init__(self, cfg: Ur5DirectEnvCfg, render_mode: str | None = None, **kwargs):
+        cfg.observation_space = sum([OBS_DIM_CFG[obs] for obs in cfg.obs_order])
         super().__init__(cfg, render_mode, **kwargs)
 
-        self._cart_dof_idx, _ = self.robot.find_joints(self.cfg.cart_dof_name)
-        self._pole_dof_idx, _ = self.robot.find_joints(self.cfg.pole_dof_name)
-
-        self.joint_pos = self.robot.data.joint_pos
-        self.joint_vel = self.robot.data.joint_vel
 
     def _setup_scene(self):
         self.robot = Articulation(self.cfg.robot_cfg)

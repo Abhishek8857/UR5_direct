@@ -13,7 +13,7 @@ from . import agents
 
 
 gym.register(
-    id="Template-Ur5-Direct-Direct-v0",
+    id="UR5-Peg-in-Hole-Direct",
     entry_point=f"{__name__}.ur5_direct_env:Ur5DirectEnv",
     disable_env_checker=True,
     kwargs={
