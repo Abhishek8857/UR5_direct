@@ -96,21 +96,50 @@ class Ur5DirectEnvCfg(DirectRLEnvCfg):
         ),
     )
 
+    # scene
+    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=4096, env_spacing=4.0, replicate_physics=True)
+
     # robot(s)
     robot = ArticulationCfg(
         prim_path="/World/envs/env_.*/Robot",
         spawn=sim_utils.UsdFileCfg(
-            usd_path=f"{"assets/UR5_robot.usd"}",
+            usd_path="assets/UR5_robot.usd",
             activate_contact_sensors=True,
             rigid_props=sim_utils.RigidBodyMaterialCfg(
                 disable_gravity=True,
-                
-            )
+                max_penetration_velocity=5.0,
+                linear_damping=0.0,
+                angular_damping=0.0,
+                max_linear_velocity=1000.0,
+                max_angular_velocity=3666.0,
+                enable_gyroscopic_forces=True,
+                solver_position_iteration_count=192,
+                solver_velocity_iteration_count=1,
+                max_contact_impulse=1e32,
+            ),
+            articulation_props=sim_utils.ArticulationRootPropertiesCfg(
+                enable_self_collisions=False,
+                solver_position_iteration_count=192,
+                solver_velocity_iteration_count=1,
+            ),
+            collsion_props=sim_utils.CollisionPropertiesCfg(
+                contact_offset=0.05, 
+                rest_offset=0.0
+            ),
+        ),
+        init_state=ArticulationCfg.InitialStateCfg(
+            joint_pos={
+                "base_joint":0.00871,
+                "shoulder_pan_joint":,
+                "shoulder_lift_joint": ,
+                "elbow_joint":,
+                "wrist_1_joint":,
+                "wrist_2_joint":,
+                "wrist_3_joint":,
+                "left_outer_knuckle":,
+            }
         )
     )
-
-    # scene
-    scene: InteractiveSceneCfg = InteractiveSceneCfg(num_envs=4096, env_spacing=4.0, replicate_physics=True)
 
     # custom parameters/scales
     # - controllable joint
